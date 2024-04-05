@@ -19,20 +19,25 @@ class poseDetector():
 
     def findPose(self, img, draw=True):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        results = self.pose.process(imgRGB)
+        self.results = self.pose.process(imgRGB)
     
-        if results.pose_landmarks:
+        if self.results.pose_landmarks:
             if draw:
-                self.mpDraw.draw_landmarks(img, results.pose_landmarks, self.mpPose.POSE_CONNECTIONS)
+                self.mpDraw.draw_landmarks(img, self.results.pose_landmarks, self.mpPose.POSE_CONNECTIONS)
         return img
             
-            
-        # for id, lm in enumerate(results.pose_landmarks.landmark):
-        #     h, w, c = img.shape
-        #     print(id, lm)
-        #     cx, cy = int(lm.x*w), int(lm.y*h)
-        #     cv2.circle(img, (cx, cy), 5, (255,0,0), cv2.FILLED)
-    
+    def getPosition(self, img, draw=True):  
+        lmLists = []
+        if self.results.pose_landmarks:    
+            for id, lm in enumerate(self.results.pose_landmarks.landmark):
+                h, w, c = img.shape
+                #print(id, lm)
+                cx, cy = int(lm.x*w), int(lm.y*h)
+                lmLists.append([id,cx,cy])
+                if draw:
+                    cv2.circle(img, (cx, cy), 5, (255,0,0), cv2.FILLED)
+        return lmLists
+        
 def main():
     cap = cv2.VideoCapture('p1.mp4')
     pTime = 0
@@ -44,6 +49,8 @@ def main():
         success, img = cap.read()
         img = cv2.resize(img, (new_width, new_height))   
         img = detector.findPose(img)    
+        lmList = detector.getPosition(img)
+        print(lmList[14])
                 
         cTime = time.time()
         fps = 1/(cTime-pTime)
