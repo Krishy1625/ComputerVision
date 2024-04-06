@@ -11,7 +11,7 @@ To get the requirements, run:
 
 
 Then to run the individual projects, just use this command inside the feature you want to use:
-    python3 "'feature'Module.py"
+    python3 'feature'Module.py
 
 for example for HandTracking run:
     python3 HandTrackingModule.py
